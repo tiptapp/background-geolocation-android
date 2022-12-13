@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
@@ -49,7 +50,11 @@ public class ActivityRecognitionLocationProvider extends AbstractLocationProvide
         super.onCreate();
 
         Intent detectedActivitiesIntent = new Intent(DETECTED_ACTIVITY_UPDATE);
-        detectedActivitiesPI = PendingIntent.getBroadcast(mContext, 9002, detectedActivitiesIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        int intentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            intentFlags = intentFlags | PendingIntent.FLAG_IMMUTABLE;
+        }
+        detectedActivitiesPI = PendingIntent.getBroadcast(mContext, 9002, detectedActivitiesIntent, intentFlags);
         registerReceiver(detectedActivitiesReceiver, new IntentFilter(DETECTED_ACTIVITY_UPDATE));
     }
 
